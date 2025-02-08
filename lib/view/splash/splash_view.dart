@@ -3,6 +3,8 @@ import 'package:lottie/lottie.dart';
 import 'package:mobilicis_task/view/auth/login_view.dart';
 import 'dart:async';
 
+import 'package:mobilicis_task/view/auth/verify_otp.dart';
+
 class SplashView extends StatefulWidget {
   static const route = 'splash';
   const SplashView({super.key});
@@ -16,7 +18,7 @@ class SplashViewState extends State<SplashView> {
   void initState() {
     super.initState();
     Timer(const Duration(milliseconds: 3250), () {
-      Navigator.pushReplacementNamed(context, LoginView.route);
+      Navigator.pushReplacementNamed(context, VerifyOtp.route);
     });
   }
 
