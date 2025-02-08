@@ -21,7 +21,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppAppBar(firstScreen: true),
+      appBar: const AppAppBar(),
       body: SizedBox(
         width: double.infinity,
         child: SingleChildScrollView(

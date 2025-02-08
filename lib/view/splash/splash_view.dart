@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mobilicis_task/view/auth/account_not_found.dart';
 import 'package:mobilicis_task/view/auth/login_view.dart';
 import 'dart:async';
 
@@ -18,7 +19,7 @@ class SplashViewState extends State<SplashView> {
   void initState() {
     super.initState();
     Timer(const Duration(milliseconds: 3250), () {
-      Navigator.pushReplacementNamed(context, VerifyOtp.route);
+      Navigator.pushReplacementNamed(context, AccountNotFound.route);
     });
   }
 

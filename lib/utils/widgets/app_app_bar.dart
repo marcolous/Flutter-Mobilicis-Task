@@ -12,12 +12,14 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           onPressed: () {},
           icon: const Icon(Icons.close),
-        )
+        ),
       ],
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.arrow_back),
-      ),
+      leading: !firstScreen
+          ? IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.arrow_back),
+            )
+          : null,
     );
   }
 

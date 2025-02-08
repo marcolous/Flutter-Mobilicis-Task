@@ -1,3 +1,4 @@
+import 'package:mobilicis_task/view/auth/account_not_found.dart';
 import 'package:mobilicis_task/view/auth/login_view.dart';
 import 'package:mobilicis_task/view/auth/verify_otp.dart';
 import 'package:mobilicis_task/view/home/home_view.dart';
@@ -9,5 +10,6 @@ class AppRoutes {
     HomeView.route: (context) => const HomeView(),
     LoginView.route: (context) => const LoginView(),
     VerifyOtp.route: (context) => const VerifyOtp(),
+    AccountNotFound.route: (context) => const AccountNotFound(),
   };
 }
