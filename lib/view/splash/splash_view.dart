@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mobilicis_task/view/auth/login_view.dart';
 import 'dart:async';
-
-import 'package:mobilicis_task/view/home/home_view.dart';
 
 class SplashView extends StatefulWidget {
   static const route = 'splash';
   const SplashView({super.key});
 
   @override
-  _SplashViewState createState() => _SplashViewState();
+  SplashViewState createState() => SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView> {
+class SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 3200), () {
-      Navigator.pushReplacementNamed(context, HomeView.route);
+    Timer(const Duration(milliseconds: 3250), () {
+      Navigator.pushReplacementNamed(context, LoginView.route);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
         child: Lottie.asset(
           'assets/gifs/Splash.json',
