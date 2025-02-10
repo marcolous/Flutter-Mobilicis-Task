@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:mobilicis_task/utils/app_images.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
 import 'package:mobilicis_task/utils/widgets/app_app_bar.dart';
+import 'package:mobilicis_task/view/home/widgets/filter_bottom_sheet.dart';
 import 'package:mobilicis_task/view/home/widgets/home_title_text.dart';
 import 'package:mobilicis_task/view/home/widgets/search_and_tags.dart';
 import 'package:mobilicis_task/view/home/widgets/slidable_home_ad_banner.dart';
@@ -357,11 +358,11 @@ class FilterSort extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         children: [
-          filterSortItem('Sort', AppImages.sort, () {
-            return showSortBottomSheet(context);
-          }),
+          filterSortItem(
+              'Sort', AppImages.sort, () => showSortBottomSheet(context)),
           Gap(10.w),
-          filterSortItem('Filters', AppImages.filter, () {}),
+          filterSortItem('Filters', AppImages.filter,
+              () => showFilterBottomSheet(context)),
         ],
       ),
     );

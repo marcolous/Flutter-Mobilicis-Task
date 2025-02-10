@@ -1,156 +1,296 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:mobilicis_task/utils/app_styles.dart';
+import 'package:mobilicis_task/view/home/manager/filter_cubit.dart';
 
-// // Filter State
-// class FilterState {
-//   final Set<String> readingLevels;
-//   final Set<String> languages;
-//   final Set<String> categories;
+void showFilterBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (_) => BlocProvider(
+      create: (_) => FilterCubit(),
+      child: const FilterBottomSheetContent(),
+    ),
+  );
+}
 
-//   FilterState({
-//     required this.readingLevels,
-//     required this.languages,
-//     required this.categories,
-//   });
-// }
+class FilterBottomSheetContent extends StatelessWidget {
+  const FilterBottomSheetContent({super.key});
 
-// // Filter Cubit
-// class FilterCubit extends Cubit<FilterState> {
-//   FilterCubit()
-//       : super(FilterState(
-//           readingLevels: {},
-//           languages: {},
-//           categories: {},
-//         ));
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Gap(10.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Filters', style: AppStyles.style18DarkGreyMedium),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            SizedBox(
+              height: 500,
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: _buildCategoryList(context),
+                  ),
+                  const VerticalDivider(width: 1, color: Colors.grey),
+                  Expanded(
+                    flex: 3,
+                    child: _buildSubcategoryList(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Gap(10.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => context.read<FilterCubit>().clearFilters(),
+                    child: Text(
+                      'Clear',
+                      style: AppStyles.style14BlackMedium
+                          .copyWith(color: const Color(0xffF4C45D)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 180.w,
+                    height: 50.h,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xffF6C018),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      child: Text('Apply', style: AppStyles.style14BlackMedium),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Gap(10.h),
+          ],
+        ),
+      ),
+    );
+  }
 
-//   void toggleReadingLevel(String level) {
-//     final updatedLevels = Set<String>.from(state.readingLevels);
-//     updatedLevels.contains(level)
-//         ? updatedLevels.remove(level)
-//         : updatedLevels.add(level);
-//     emit(FilterState(
-//       readingLevels: updatedLevels,
-//       languages: state.languages,
-//       categories: state.categories,
-//     ));
-//   }
+  Widget _buildCategoryList(BuildContext context) {
+    final categories = [
+      'Brand',
+      'Condition',
+      'Storage',
+      'RAM',
+      'Verification',
+      'Warranty',
+      'Price Range',
+    ];
+    return ListView.builder(
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        final picked = context.watch<FilterCubit>().state.selectedCategory ==
+            categories[index];
+        return Container(
+          decoration: BoxDecoration(
+              color: picked
+                  ? const Color(0xffF6C018).withOpacity(.07)
+                  : Colors.white,
+              border: Border(
+                left: BorderSide(
+                  color: picked ? const Color(0xffF6C018) : Colors.white,
+                  width: 4,
+                ),
+              )),
+          child: ListTile(
+            title: Text(
+              categories[index],
+              style: AppStyles.style14BlackMedium,
+            ),
+            onTap: () {
+              context.read<FilterCubit>().selectCategory(categories[index]);
+            },
+          ),
+        );
+      },
+    );
+  }
 
-//   void toggleLanguage(String lang) {
-//     final updatedLanguages = Set<String>.from(state.languages);
-//     updatedLanguages.contains(lang)
-//         ? updatedLanguages.remove(lang)
-//         : updatedLanguages.add(lang);
-//     emit(FilterState(
-//       readingLevels: state.readingLevels,
-//       languages: updatedLanguages,
-//       categories: state.categories,
-//     ));
-//   }
+  Widget _buildSubcategoryList(BuildContext context) {
+    final selectedCategory =
+        context.watch<FilterCubit>().state.selectedCategory;
 
-//   void toggleCategory(String category) {
-//     final updatedCategories = Set<String>.from(state.categories);
-//     updatedCategories.contains(category)
-//         ? updatedCategories.remove(category)
-//         : updatedCategories.add(category);
-//     emit(FilterState(
-//       readingLevels: state.readingLevels,
-//       languages: state.languages,
-//       categories: updatedCategories,
-//     ));
-//   }
+    if (selectedCategory == 'Price Range') {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        child: _buildPriceRangeSection(context),
+      );
+    }
 
-//   void clearFilters() {
-//     emit(FilterState(readingLevels: {}, languages: {}, categories: {}));
-//   }
-// }
+    final subcategories = _getSubcategories(selectedCategory);
 
-// // BottomSheet UI
-// void showFilterBottomSheet(BuildContext context) {
-//   showModalBottomSheet(
-//     context: context,
-//     isScrollControlled: true,
-//     builder: (_) => BlocProvider(
-//       create: (_) => FilterCubit(),
-//       child: FilterBottomSheetContent(),
-//     ),
-//   );
-// }
+    return ListView.builder(
+      itemCount: subcategories.length,
+      itemBuilder: (context, index) {
+        final isSelected = context
+            .watch<FilterCubit>()
+            .state
+            .selectedSubcategories
+            .contains(subcategories[index]);
 
-// class FilterBottomSheetContent extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(16.0),
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           _buildFilterSection(
-//             context,
-//             title: "Reading Level",
-//             options: ["Beginner", "Intermediate", "Advanced"],
-//             onSelected: (value) =>
-//                 {}, //context.read<FilterCubit>().toggleReadingLevel(value),
-//           ),
-//           _buildFilterSection(
-//             context,
-//             title: "Language",
-//             options: ["English", "Spanish", "French"],
-//             onSelected: (value) =>
-//                 {}, //context.read<FilterCubit>().toggleLanguage(value),
-//           ),
-//           _buildFilterSection(
-//             context,
-//             title: "Category",
-//             options: ["Fiction", "Science", "History"],
-//             onSelected: (value) =>
-//                 {}, //context.read<FilterCubit>().toggleCategory(value),
-//           ),
-//           const SizedBox(height: 16),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               TextButton(
-//                 onPressed: () =>
-//                     {}, //context.read<FilterCubit>().clearFilters(),
-//                 child: const Text("Clear"),
-//               ),
-//               ElevatedButton(
-//                 onPressed: () => Navigator.pop(context),
-//                 child: const Text("Apply"),
-//               ),
-//             ],
-//           )
-//         ],
-//       ),
-//     );
-//   }
+        return GestureDetector(
+          onTap: () {
+            context.read<FilterCubit>().toggleSubcategory(subcategories[index]);
+          },
+          child: Row(
+            children: [
+              Checkbox(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                checkColor: Colors.white,
+                activeColor: const Color(0xff484848),
+                side: const BorderSide(color: Color(0xffD9D9D9)),
+                value: isSelected,
+                onChanged: (bool? value) {
+                  context
+                      .read<FilterCubit>()
+                      .toggleSubcategory(subcategories[index]);
+                },
+              ),
+              Text(
+                subcategories[index],
+                style:
+                    AppStyles.style14GreyRegular.copyWith(color: Colors.black),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-//   Widget _buildFilterSection(
-//     BuildContext context, {
-//     required String title,
-//     required List<String> options,
-//     required Function(String) onSelected,
-//   }) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(title,
-//             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-//         Wrap(
-//           children: options
-//               .map((option) => FilterChip(
-//                     label: Text(option),
-//                     selected: false, // context
-//                     // .watch<FilterCubit>()
-//                     // .state
-//                     // .readingLevels
-//                     // .contains(option),
-//                     onSelected: (selected) => onSelected(option),
-//                   ))
-//               .toList(),
-//         ),
-//         const SizedBox(height: 16),
-//       ],
-//     );
-//   }
-// }
+  List<String> _getSubcategories(String? category) {
+    switch (category) {
+      case 'Brand':
+        return [
+          'All Brands',
+          'Apple',
+          'Samsung',
+          'Google',
+          'OnePlus',
+          'Xiaomi',
+        ];
+      case 'Condition':
+        return [
+          'All Conditions',
+          'Like New',
+          'Excellent',
+          'Good',
+          'Fair',
+          'Needs Repair'
+        ];
+      case 'Storage':
+        return [
+          'All',
+          '8 GB',
+          '16 GB',
+          '32 GB',
+          '64 GB',
+          '128 GB',
+          '256 GB',
+          '512 GB',
+          '1 TB'
+        ];
+
+      case 'RAM':
+        return [
+          'All',
+          '2 GB',
+          '3 GB',
+          '4 GB',
+          '6 GB',
+          '8 GB',
+          '12 GB',
+          '16 GB'
+        ];
+      case 'Verification':
+        return ['All', 'Verified Only'];
+      case 'Warranty':
+        return ['Brand Warranty', 'Seller Warranty'];
+      default:
+        return [];
+    }
+  }
+
+  Widget _buildPriceRangeSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('Any', style: AppStyles.style12BlackMedium),
+        Text('Maximum Price', style: AppStyles.style10BlackMedium),
+        SizedBox(
+          height: 400,
+          child: RotatedBox(
+            quarterTurns: 3,
+            child: RangeSlider(
+              activeColor: Colors.black,
+              inactiveColor: Colors.grey,
+              values: context.watch<FilterCubit>().state.priceRange,
+              min: 5000,
+              max: 100000,
+              divisions: 200,
+              labels: RangeLabels(
+                context
+                    .watch<FilterCubit>()
+                    .state
+                    .priceRange
+                    .start
+                    .round()
+                    .toString(),
+                context
+                    .watch<FilterCubit>()
+                    .state
+                    .priceRange
+                    .end
+                    .round()
+                    .toString(),
+              ),
+              onChanged: (RangeValues values) {
+                context.read<FilterCubit>().updatePriceRange(values);
+              },
+            ),
+          ),
+        ),
+        Text('Minimum Price', style: AppStyles.style10BlackMedium),
+        Text('₹ 5,000', style: AppStyles.style12BlackMedium),
+        Gap(16.h),
+      ],
+    );
+  }
+}

@@ -23,13 +23,13 @@ class SortBottomSheet extends StatefulWidget {
 }
 
 class SortBottomSheetState extends State<SortBottomSheet> {
-  String? selectedOption = "Value For Money";
+  String? selectedOption = 'Value For Money';
   final List<String> sortOptions = [
-    "Value For Money",
-    "Price: High To Low",
-    "Price: Low To High",
-    "Latest",
-    "Distance"
+    'Value For Money',
+    'Price: High To Low',
+    'Price: Low To High',
+    'Latest',
+    'Distance'
   ];
 
   @override
@@ -49,7 +49,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Sort", style: AppStyles.style18DarkGreyMedium),
+                  Text('Sort', style: AppStyles.style18DarkGreyMedium),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
@@ -90,7 +90,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                   TextButton(
                     onPressed: () => setState(() => selectedOption = null),
                     child: Text(
-                      "Clear",
+                      'Clear',
                       style: AppStyles.style14BlackMedium
                           .copyWith(color: const Color(0xffF4C45D)),
                     ),
@@ -107,7 +107,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: Text("Apply", style: AppStyles.style14BlackMedium),
+                      child: Text('Apply', style: AppStyles.style14BlackMedium),
                     ),
                   ),
                 ],
