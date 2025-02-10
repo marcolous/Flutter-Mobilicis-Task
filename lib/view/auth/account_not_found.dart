@@ -38,8 +38,9 @@ class AccountNotFound extends StatelessWidget {
               ),
               Gap(100.h),
               const CustomTextField(
-                title: 'Please Tell Us Your Name *',
+                title: 'Please Tell Us Your Name ',
                 hintText: 'Name',
+                hasAst: true,
               ),
               Gap(100.h),
               AppButton(

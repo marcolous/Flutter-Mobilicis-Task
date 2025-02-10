@@ -10,12 +10,14 @@ class CustomTextField extends StatefulWidget {
     this.isPhone = false,
     this.isPassword = false,
     required this.title,
+    this.hasAst = false,
   });
   final String hintText;
   final TextEditingController? controller;
   final bool isPhone;
   final bool isPassword;
   final String title;
+  final bool hasAst;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -37,9 +39,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.title,
-            style: AppStyles.style12BlackRegular,
+          RichText(
+            text: TextSpan(
+              text: widget.title,
+              style: AppStyles.style12BlackRegular,
+              children: [
+                widget.hasAst
+                    ? TextSpan(
+                        text: '*',
+                        style: AppStyles.style12BlackRegular
+                            .copyWith(color: Colors.red),
+                      )
+                    : const TextSpan(),
+              ],
+            ),
           ),
           Container(
             height: 55,
@@ -61,7 +74,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               style: AppStyles.style16DarkGreyRegular,
               controller: widget.controller,
               decoration: InputDecoration(
-                prefixText: widget.isPhone ? '+91 ' : null, // Added prefix text
+                prefixText: widget.isPhone ? '+91 ' : null,
                 prefixStyle: AppStyles.style16DarkGreyRegular,
                 suffixIcon: widget.isPassword
                     ? IconButton(
