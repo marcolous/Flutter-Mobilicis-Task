@@ -22,6 +22,7 @@ class SearchAndTags extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Gap(10.h),
         const SearchField(),
         Gap(10.h),
         SizedBox(

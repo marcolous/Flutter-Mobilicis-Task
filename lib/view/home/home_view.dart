@@ -1,14 +1,15 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:mobilicis_task/utils/app_images.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
-import 'package:mobilicis_task/utils/widgets/app_app_bar.dart';
-import 'package:mobilicis_task/view/home/widgets/filter_bottom_sheet.dart';
+import 'package:mobilicis_task/view/home/widgets/filter_sort.dart';
 import 'package:mobilicis_task/view/home/widgets/home_title_text.dart';
+import 'package:mobilicis_task/view/home/widgets/product_grid.dart';
 import 'package:mobilicis_task/view/home/widgets/search_and_tags.dart';
 import 'package:mobilicis_task/view/home/widgets/slidable_home_ad_banner.dart';
-import 'package:mobilicis_task/view/home/widgets/sort_bottom_sheet.dart';
 import 'package:mobilicis_task/view/home/widgets/top_brands_list_view.dart';
 import 'package:mobilicis_task/view/home/widgets/your_mind_list_view.dart';
 
@@ -16,32 +17,115 @@ class HomeView extends StatelessWidget {
   static const route = 'home';
   const HomeView({super.key});
 
+  Future<void> test() async {}
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         floatingActionButton: customFloatingActionButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        appBar: const HomeAppBar(),
         drawer: const AppDrawerLoggedIn(),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SearchAndTags(),
-              const SlidableHomeAdBanner(),
-              Gap(20.h),
-              const HomeTitleText(title1: 'What’s on your mind?'),
-              Gap(10.h),
-              const YourMindListView(),
-              Gap(10.h),
-              const HomeTitleText(title1: 'Top brands', showIcon: true),
-              Gap(15.h),
-              const TopBrandsListView(),
-              Gap(40.h),
-              const HomeTitleText(title1: 'Best deals', title2: ' in India'),
-              Gap(20.h),
-              const FilterSort(),
+        body: RefreshIndicator(
+          backgroundColor: Colors.white,
+          strokeWidth: 2,
+          onRefresh: () {
+            return test();
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                elevation: 0,
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                flexibleSpace: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                    child: Container(
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ),
+                leading: Builder(
+                  builder: (context) => IconButton(
+                    icon: SizedBox(
+                      width: 25.w,
+                      child: AppImages.drawer,
+                    ),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  ),
+                ),
+                titleSpacing: BorderSide.strokeAlignInside,
+                title: Row(
+                  children: [
+                    SizedBox(
+                      width: 60.w,
+                      child: AppImages.logo,
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Text(
+                          'India',
+                          style: AppStyles.style12BlackRegular,
+                        ),
+                        Gap(5.w),
+                        SizedBox(
+                          width: 15.h,
+                          child: AppImages.location,
+                        ),
+                        Gap(15.w),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size(80.w, 30.h),
+                            backgroundColor: const Color(0xffF6C018),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: () {},
+                          child: Text(
+                            'Login',
+                            style: AppStyles.style12BlackMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Gap(16.w),
+                  ],
+                ),
+                pinned: false,
+                floating: true,
+                snap: true,
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SearchAndTagsHeaderDelegate(
+                  child: const SearchAndTags(),
+                ),
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    const SlidableHomeAdBanner(),
+                    Gap(20.h),
+                    const HomeTitleText(title1: 'What’s on your mind?'),
+                    Gap(10.h),
+                    const YourMindListView(),
+                    Gap(10.h),
+                    const HomeTitleText(title1: 'Top brands', showIcon: true),
+                    Gap(15.h),
+                    const TopBrandsListView(),
+                    Gap(40.h),
+                    const HomeTitleText(
+                        title1: 'Best deals', title2: ' in India'),
+                    Gap(20.h),
+                    const FilterSort(),
+                    Gap(20.h),
+                  ],
+                ),
+              ),
               const ProductsGridView(),
             ],
           ),
@@ -85,6 +169,37 @@ class HomeView extends StatelessWidget {
   }
 }
 
+class _SearchAndTagsHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _SearchAndTagsHeaderDelegate({required this.child});
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+        child: Container(
+          color: Colors.white.withOpacity(0.8),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 130.h;
+
+  @override
+  double get minExtent => 130.h;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
+
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
@@ -99,45 +214,47 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 25.w,
             child: AppImages.drawer,
           ),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
+          onPressed: () => Scaffold.of(context).openDrawer(),
         ),
       ),
+      titleSpacing: BorderSide.strokeAlignInside,
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
             width: 60.w,
             child: AppImages.logo,
           ),
+          const Spacer(),
           Row(
             children: [
-              const Text(
+              Text(
                 'India',
-                style: TextStyle(color: Colors.black),
+                style: AppStyles.style12BlackRegular,
               ),
-              const SizedBox(width: 5),
+              Gap(5.w),
               SizedBox(
-                width: 20,
+                width: 15.h,
                 child: AppImages.location,
               ),
-              const SizedBox(width: 15),
+              Gap(15.w),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size(80.w, 30.h),
                   backgroundColor: const Color(0xffF6C018),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   'Login',
-                  style: TextStyle(color: Colors.black),
+                  style: AppStyles.style12BlackMedium,
                 ),
               ),
             ],
           ),
+          Gap(16.w),
         ],
       ),
     );
@@ -341,237 +458,6 @@ class AppDrawerLoggedIn extends StatelessWidget {
                 mainAxisSpacing: 15,
               ),
               itemBuilder: (context, index) => list[index],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FilterSort extends StatelessWidget {
-  const FilterSort({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Row(
-        children: [
-          filterSortItem(
-              'Sort', AppImages.sort, () => showSortBottomSheet(context)),
-          Gap(10.w),
-          filterSortItem('Filters', AppImages.filter,
-              () => showFilterBottomSheet(context)),
-        ],
-      ),
-    );
-  }
-
-  Widget filterSortItem(
-      String title, Widget image, void Function()? onPressed) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: const Color(0xffE0E0E0),
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Center(
-          child: Row(
-            children: [
-              SizedBox(
-                width: 20.w,
-                child: image,
-              ),
-              Gap(10.w),
-              Text(
-                title,
-                style: AppStyles.style12BlackMedium.copyWith(
-                  color: const Color(0xff121212),
-                ),
-              ),
-              Gap(10.w),
-              const Icon(Icons.keyboard_arrow_down_rounded)
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ProductsGridView extends StatelessWidget {
-  const ProductsGridView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 500,
-      child: GridView.builder(
-        itemCount: 10,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: .56,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 15,
-        ),
-        itemBuilder: (context, index) => const ProductCard(),
-      ),
-    );
-  }
-}
-
-class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: const Color(0xffc8c8c8).withOpacity(.9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xffCFCFCF),
-            width: 1,
-          )),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(12.r),
-                  topLeft: Radius.circular(12.r),
-                ),
-                child: Image.network(
-                  'https://i.imgur.com/QULzhVh.png',
-                  height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 10,
-                left: 0,
-                child: SizedBox(
-                  width: 120.w,
-                  child: AppImages.verified,
-                ),
-              ),
-              Positioned(
-                top: 15,
-                left: 8,
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'ORU',
-                        style: AppStyles.style12WhiteSemiBold,
-                      ),
-                      TextSpan(
-                        text: 'Verified',
-                        style: AppStyles.style12WhiteMedium,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              const Positioned(
-                top: 10,
-                right: 10,
-                child: Icon(
-                  Icons.favorite_border,
-                  color: Colors.white,
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  // width: double.infinity,
-                  height: 25.h,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff4C4C4C).withOpacity(.7),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'PRICE NEGOTIABLE',
-                      style: AppStyles.style12WhiteSemiBold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Gap(10.h),
-                Text(
-                  'Apple iPhone 13 Pro',
-                  style: AppStyles.style14BlackMedium,
-                ),
-                Gap(4.h),
-                Text(
-                  '12/256 GB • Like New',
-                  style: AppStyles.style12BlackRegular.copyWith(
-                    color: const Color(0xff6D6D6D),
-                  ),
-                ),
-                Gap(8.h),
-                Row(
-                  children: [
-                    Text(
-                      '₹ 41,500',
-                      style: AppStyles.style16BlackBold,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '₹ 81,500',
-                      style: AppStyles.style10BlackMedium.copyWith(
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '(45% off)',
-                      style: AppStyles.style10BlackMedium
-                          .copyWith(color: Colors.red),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Expanded(child: SizedBox(height: 10)),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: const Color(0xffDFDFDF).withOpacity(.9),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12.r),
-                bottomRight: Radius.circular(12.r),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Nijampur, Luc...',
-                    style: AppStyles.style12BlackMedium
-                        .copyWith(color: const Color(0xff7D7D7D))),
-                Text('July 25th',
-                    style: AppStyles.style12BlackMedium
-                        .copyWith(color: const Color(0xff7D7D7D))),
-              ],
             ),
           ),
         ],

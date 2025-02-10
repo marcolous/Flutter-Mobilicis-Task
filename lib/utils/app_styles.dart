@@ -58,6 +58,12 @@ class AppStyles {
     fontWeight: FontWeight.w500,
     fontFamily: fontFamily,
   );
+  static TextStyle style14BlackBold = TextStyle(
+    color: const Color(0xff171717),
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w700,
+    fontFamily: fontFamily,
+  );
 
   static TextStyle style16LightGreyRegular = TextStyle(
     color: const Color(0xffCCCCCC),
