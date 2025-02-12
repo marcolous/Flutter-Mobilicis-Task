@@ -145,6 +145,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
     );
 
     if (res) {
+      UserManager.instance.setIsLoggedIn(true);
       if (UserManager.instance.user!.userName == '') {
         cubit.updateCurrentScreen(2);
         if (!isBottomSheet) {

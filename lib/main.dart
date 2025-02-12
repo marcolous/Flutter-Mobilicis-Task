@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobilicis_task/services/manager/user_manager.dart';
 import 'package:mobilicis_task/utils/app_routes.dart';
 import 'package:mobilicis_task/view/auth/manager/auth_cubit.dart';
 import 'package:mobilicis_task/view/home/manager/filter_cubit.dart';
@@ -8,6 +9,7 @@ import 'package:mobilicis_task/view/home/manager/home_cubit.dart';
 import 'package:mobilicis_task/view/splash/splash_view.dart';
 
 void main() {
+  UserManager.instance.init();
   runApp(const Mobilicis());
 }
 

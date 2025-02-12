@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobilicis_task/services/manager/user_manager.dart';
 import 'package:mobilicis_task/services/repo/auth_repo.dart';
 import 'package:mobilicis_task/utils/app_images.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
@@ -190,6 +191,7 @@ class AppDrawerLoggedIn extends StatelessWidget {
               AuthRepo repo = AuthRepo();
               final res = await repo.logout();
               if (res) {
+                UserManager.instance.clearUser();
                 Navigator.pushNamed(context, HomeView.route);
               }
             },
