@@ -28,7 +28,9 @@ class HomeView extends StatelessWidget {
       child: Scaffold(
         floatingActionButton: customFloatingActionButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        drawer: const AppDrawerLoggedIn(),
+        drawer: UserManager.instance.isLoggedIn
+            ? const AppDrawerLoggedIn()
+            : const AppDrawer(),
         body: RefreshIndicator(
           backgroundColor: Colors.white,
           strokeWidth: 2,
@@ -254,7 +256,9 @@ class AppDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50.r),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, LoginView.route);
+              },
               child: Text(
                 'Login/SignUp',
                 style: AppStyles.style16BlackMedium
