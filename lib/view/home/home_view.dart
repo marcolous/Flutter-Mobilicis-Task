@@ -20,7 +20,9 @@ class HomeView extends StatelessWidget {
   static const route = 'home';
   const HomeView({super.key});
 
-  Future<void> test() async {}
+  Future<void> refresh() async {
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class HomeView extends StatelessWidget {
           backgroundColor: Colors.white,
           strokeWidth: 2,
           onRefresh: () {
-            return test();
+            return refresh();
           },
           child: CustomScrollView(
             slivers: [

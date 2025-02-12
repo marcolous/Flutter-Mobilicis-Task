@@ -11,7 +11,7 @@ part 'home_cubit.freezed.dart';
 class HomeState with _$HomeState {
   const factory HomeState({
     @Default(FilterModel()) FilterModel filters,
-    @Default(BrandModelResponse()) BrandModelResponse brands,
+    @Default([]) List<BrandModel>? brands,
     @Default(FaqModelResponse()) FaqModelResponse faqs,
   }) = _HomeState;
 }

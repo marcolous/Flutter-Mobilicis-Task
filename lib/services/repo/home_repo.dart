@@ -11,7 +11,7 @@ class HomeRepo {
     return await homeService.getFaqs();
   }
 
-  Future<BrandModelResponse?> fetchBrands() async {
+  Future<List<BrandModel>?> fetchBrands() async {
     return await homeService.fetchBrands();
   }
 

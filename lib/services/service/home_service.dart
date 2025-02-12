@@ -27,11 +27,11 @@ class HomeService {
     return null;
   }
 
-  Future<BrandModelResponse?> fetchBrands() async {
+  Future<List<BrandModel>?> fetchBrands() async {
     try {
       final res = await dioClient.dio.get('/makeWithImages');
       if (res.statusCode == 200) {
-        final brand = BrandModelResponse.fromJson(res.data);
+        final brand = BrandModel.fromJsonList(res.data['dataObject']);
         return brand;
       } else {
         AppFlutterToast.flutterToastError('Couldn\'t fetch Brands');
