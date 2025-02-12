@@ -1,4 +1,5 @@
 import 'package:mobilicis_task/models/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManager {
   UserManager._privateConstructor();
@@ -19,6 +20,13 @@ class UserManager {
   String? _cookies;
   String? get cookies => _cookies;
 
+  late SharedPreferences _prefs;
+
+  Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+    _isLoggedIn = _prefs.getBool('isLoggedIn') ?? false;
+  }
+
   void setUser(UserModel user) {
     _user = user;
   }
@@ -27,17 +35,20 @@ class UserManager {
     _token = token;
   }
 
-  void setIsLoggedIn(bool isLoggedIn) {
+  void setIsLoggedIn(bool isLoggedIn) async {
     _isLoggedIn = isLoggedIn;
+    await _prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
   void setCookies(String cookies) {
     _cookies = cookies;
   }
 
-  void clearUser() {
+  void clearUser() async {
     _user = null;
     _token = null;
     _cookies = null;
+    _isLoggedIn = false;
+    await _prefs.remove('isLoggedIn');
   }
 }

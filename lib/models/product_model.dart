@@ -31,6 +31,7 @@ class ProductModel {
   final LocationModel? location;
   final int? originalPrice;
   final int? discountedPrice;
+  bool isLiked;
 
   ProductModel({
     this.id,
@@ -60,7 +61,36 @@ class ProductModel {
     this.location,
     this.originalPrice,
     this.discountedPrice,
+    this.isLiked = false,
   });
+
+  ProductModel copyWith({
+    String? id,
+    String? marketingName,
+    String? deviceStorage,
+    String? deviceCondition,
+    int? originalPrice,
+    int? discountedPrice,
+    double? discountPercentage,
+    bool? verified,
+    bool? openForNegotiation,
+    List<ImageModel>? images,
+    bool? isLiked,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      marketingName: marketingName ?? this.marketingName,
+      deviceStorage: deviceStorage ?? this.deviceStorage,
+      deviceCondition: deviceCondition ?? this.deviceCondition,
+      originalPrice: originalPrice ?? this.originalPrice,
+      discountedPrice: discountedPrice ?? this.discountedPrice,
+      discountPercentage: discountPercentage ?? this.discountPercentage,
+      verified: verified ?? this.verified,
+      openForNegotiation: openForNegotiation ?? this.openForNegotiation,
+      images: images ?? this.images,
+      isLiked: isLiked ?? this.isLiked,
+    );
+  }
 
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);

@@ -20,6 +20,7 @@ mixin _$HomeState {
   FaqModelResponse? get faqs => throw _privateConstructorUsedError;
   List<BrandModel>? get brands => throw _privateConstructorUsedError;
   List<ProductModel>? get products => throw _privateConstructorUsedError;
+  bool? get isLiked => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -35,7 +36,8 @@ abstract class $HomeStateCopyWith<$Res> {
       {FilterModel? filters,
       FaqModelResponse? faqs,
       List<BrandModel>? brands,
-      List<ProductModel>? products});
+      List<ProductModel>? products,
+      bool? isLiked});
 }
 
 /// @nodoc
@@ -55,6 +57,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? faqs = freezed,
     Object? brands = freezed,
     Object? products = freezed,
+    Object? isLiked = freezed,
   }) {
     return _then(_value.copyWith(
       filters: freezed == filters
@@ -73,6 +76,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.products
           : products // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -89,7 +96,8 @@ abstract class _$$HomeStateImplCopyWith<$Res>
       {FilterModel? filters,
       FaqModelResponse? faqs,
       List<BrandModel>? brands,
-      List<ProductModel>? products});
+      List<ProductModel>? products,
+      bool? isLiked});
 }
 
 /// @nodoc
@@ -107,6 +115,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? faqs = freezed,
     Object? brands = freezed,
     Object? products = freezed,
+    Object? isLiked = freezed,
   }) {
     return _then(_$HomeStateImpl(
       filters: freezed == filters
@@ -125,6 +134,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
           ? _value._products
           : products // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -136,7 +149,8 @@ class _$HomeStateImpl implements _HomeState {
       {this.filters,
       this.faqs,
       final List<BrandModel>? brands,
-      final List<ProductModel>? products})
+      final List<ProductModel>? products,
+      this.isLiked})
       : _brands = brands,
         _products = products;
 
@@ -165,8 +179,11 @@ class _$HomeStateImpl implements _HomeState {
   }
 
   @override
+  final bool? isLiked;
+
+  @override
   String toString() {
-    return 'HomeState(filters: $filters, faqs: $faqs, brands: $brands, products: $products)';
+    return 'HomeState(filters: $filters, faqs: $faqs, brands: $brands, products: $products, isLiked: $isLiked)';
   }
 
   @override
@@ -177,7 +194,8 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.filters, filters) || other.filters == filters) &&
             (identical(other.faqs, faqs) || other.faqs == faqs) &&
             const DeepCollectionEquality().equals(other._brands, _brands) &&
-            const DeepCollectionEquality().equals(other._products, _products));
+            const DeepCollectionEquality().equals(other._products, _products) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked));
   }
 
   @override
@@ -186,7 +204,8 @@ class _$HomeStateImpl implements _HomeState {
       filters,
       faqs,
       const DeepCollectionEquality().hash(_brands),
-      const DeepCollectionEquality().hash(_products));
+      const DeepCollectionEquality().hash(_products),
+      isLiked);
 
   @JsonKey(ignore: true)
   @override
@@ -200,7 +219,8 @@ abstract class _HomeState implements HomeState {
       {final FilterModel? filters,
       final FaqModelResponse? faqs,
       final List<BrandModel>? brands,
-      final List<ProductModel>? products}) = _$HomeStateImpl;
+      final List<ProductModel>? products,
+      final bool? isLiked}) = _$HomeStateImpl;
 
   @override
   FilterModel? get filters;
@@ -210,6 +230,8 @@ abstract class _HomeState implements HomeState {
   List<BrandModel>? get brands;
   @override
   List<ProductModel>? get products;
+  @override
+  bool? get isLiked;
   @override
   @JsonKey(ignore: true)
   _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>

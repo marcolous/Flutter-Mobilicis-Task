@@ -15,6 +15,7 @@ class HomeState with _$HomeState {
     FaqModelResponse? faqs,
     List<BrandModel>? brands,
     List<ProductModel>? products,
+    bool? isLiked,
   }) = _HomeState;
 
   factory HomeState.initial() => HomeState(
@@ -22,6 +23,7 @@ class HomeState with _$HomeState {
         faqs: const FaqModelResponse(),
         brands: [],
         products: [],
+        isLiked: false,
       );
 }
 
@@ -75,6 +77,15 @@ class HomeCubit extends Cubit<HomeState> {
     final faqs = await repo.getFaqs();
     if (faqs != null) {
       emit(state.copyWith(faqs: faqs));
+    }
+  }
+
+  void toggleLike(ProductModel product) {
+    final updatedProducts = List<ProductModel>.from(state.products!);
+    final index = updatedProducts.indexOf(product);
+    if (index != -1) {
+      updatedProducts[index] = product.copyWith(isLiked: !product.isLiked);
+      emit(state.copyWith(products: updatedProducts));
     }
   }
 }

@@ -45,6 +45,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
           : LocationModel.fromJson(json['location'] as Map<String, dynamic>),
       originalPrice: (json['originalPrice'] as num?)?.toInt(),
       discountedPrice: (json['discountedPrice'] as num?)?.toInt(),
+      isLiked: json['isLiked'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ProductModelToJson(ProductModel instance) =>
@@ -76,6 +77,7 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) =>
       'location': instance.location,
       'originalPrice': instance.originalPrice,
       'discountedPrice': instance.discountedPrice,
+      'isLiked': instance.isLiked,
     };
 
 ImageModel _$ImageModelFromJson(Map<String, dynamic> json) => ImageModel(

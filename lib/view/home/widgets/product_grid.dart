@@ -22,6 +22,7 @@ class ProductsGridView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       sliver: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
+          bool isLiked = false;
           return SliverGrid.builder(
             itemCount: state.products!.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -40,168 +41,181 @@ class ProductsGridView extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key, required this.product});
+  const ProductCard({super.key, required this.product, this.onTap});
   final ProductModel product;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: const Color(0xffc8c8c8).withOpacity(.9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xffCFCFCF),
-            width: 1,
-          )),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(12.r),
-                  topLeft: Radius.circular(12.r),
-                ),
-                child: CachedImageWidget(
-                  imageUrl: product.images![0].thumbImage!,
-                  height: 200,
-                  width: double.infinity,
-                ),
-              ),
-              if (product.verified!)
-                Positioned(
-                  top: 10,
-                  left: 0,
-                  child: SizedBox(
-                    width: 120.w,
-                    child: AppImages.verified,
-                  ),
-                ),
-              if (product.verified!)
-                Positioned(
-                  top: 15,
-                  left: 8,
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'ORU',
-                          style: AppStyles.style12WhiteSemiBold,
-                        ),
-                        TextSpan(
-                          text: 'Verified',
-                          style: AppStyles.style12WhiteMedium,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {
-                    if (!UserManager.instance.isLoggedIn) {
-                      modalBottomSheet(context);
-                    }
-                  },
-                  child: const Icon(
-                    Icons.favorite_border,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              if (product.openForNegotiation!)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 25.h,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff4C4C4C).withOpacity(.7),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'PRICE NEGOTIABLE',
-                        style: AppStyles.style12WhiteSemiBold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xffc8c8c8).withOpacity(.9),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: const Color(0xffCFCFCF),
+              width: 1,
+            ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Gap(10.h),
-                Text(
-                  product.marketingName!,
-                  style: AppStyles.style14BlackMedium,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Gap(4.h),
-                Text(
-                  '${product.deviceStorage!} • ${product.deviceCondition}',
-                  style: AppStyles.style12BlackRegular.copyWith(
-                    color: const Color(0xff6D6D6D),
-                  ),
-                ),
-                Gap(8.h),
-                Row(
-                  children: [
-                    Text(
-                      '₹ ${product.discountedPrice ?? 0}',
-                      style: AppStyles.style14BlackBold,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(12.r),
+                      topLeft: Radius.circular(12.r),
                     ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '₹ ${product.originalPrice ?? 0}',
-                      style: AppStyles.style10BlackMedium.copyWith(
-                        decoration: TextDecoration.lineThrough,
+                    child: CachedImageWidget(
+                      imageUrl:
+                          (product.images != null && product.images!.isNotEmpty)
+                              ? product.images![0].thumbImage ?? ''
+                              : '',
+                      height: 200,
+                      width: double.infinity,
+                    ),
+                  ),
+                  if (product.verified!)
+                    Positioned(
+                      top: 10,
+                      left: 0,
+                      child: SizedBox(
+                        width: 120.w,
+                        child: AppImages.verified,
                       ),
                     ),
-                    const SizedBox(width: 5),
+                  if (product.verified!)
+                    Positioned(
+                      top: 15,
+                      left: 8,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'ORU',
+                              style: AppStyles.style12WhiteSemiBold,
+                            ),
+                            TextSpan(
+                              text: 'Verified',
+                              style: AppStyles.style12WhiteMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (UserManager.instance.isLoggedIn) {
+                          context.read<HomeCubit>().toggleLike(product);
+                        } else {
+                          modalBottomSheet(context);
+                        }
+                      },
+                      child: Icon(
+                        product.isLiked
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: product.isLiked ? Colors.red : Colors.white,
+                      ),
+                    ),
+                  ),
+                  if (product.openForNegotiation!)
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 25.h,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff4C4C4C).withOpacity(.7),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'PRICE NEGOTIABLE',
+                            style: AppStyles.style12WhiteSemiBold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Gap(10.h),
                     Text(
-                      '(${product.discountPercentage?.toStringAsFixed(0) ?? '0'}% off)',
-                      style: AppStyles.style10BlackMedium
-                          .copyWith(color: Colors.red),
-                      overflow: TextOverflow.ellipsis,
+                      product.marketingName!,
+                      style: AppStyles.style14BlackMedium,
                       maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Gap(4.h),
+                    Text(
+                      '${product.deviceStorage!} • ${product.deviceCondition}',
+                      style: AppStyles.style12BlackRegular.copyWith(
+                        color: const Color(0xff6D6D6D),
+                      ),
+                    ),
+                    Gap(8.h),
+                    Row(
+                      children: [
+                        Text(
+                          '₹ ${product.discountedPrice ?? 0}',
+                          style: AppStyles.style14BlackBold,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '₹ ${product.originalPrice ?? 0}',
+                          style: AppStyles.style10BlackMedium.copyWith(
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '(${product.discountPercentage?.toStringAsFixed(0) ?? '0'}% off)',
+                          style: AppStyles.style10BlackMedium
+                              .copyWith(color: Colors.red),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const Expanded(child: SizedBox(height: 10)),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: const Color(0xffDFDFDF).withOpacity(.9),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12.r),
-                bottomRight: Radius.circular(12.r),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Nijampur, Luc...',
-                    style: AppStyles.style10BlackMedium
-                        .copyWith(color: const Color(0xff7D7D7D))),
-                Text('July 25th',
-                    style: AppStyles.style10BlackMedium
-                        .copyWith(color: const Color(0xff7D7D7D))),
-              ],
-            ),
+              const Expanded(child: SizedBox(height: 10)),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xffDFDFDF).withOpacity(.9),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(12.r),
+                    bottomRight: Radius.circular(12.r),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Nijampur, Luc...',
+                        style: AppStyles.style10BlackMedium
+                            .copyWith(color: const Color(0xff7D7D7D))),
+                    Text('July 25th',
+                        style: AppStyles.style10BlackMedium
+                            .copyWith(color: const Color(0xff7D7D7D))),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
