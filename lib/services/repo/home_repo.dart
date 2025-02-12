@@ -7,11 +7,11 @@ import 'package:mobilicis_task/services/service/home_service.dart';
 class HomeRepo {
   final HomeService homeService = HomeService(DioClient());
 
-  Future<FaqModel?> getFaqs() async {
+  Future<FaqModelResponse?> getFaqs() async {
     return await homeService.getFaqs();
   }
 
-  Future<BrandModel?> fetchBrands() async {
+  Future<BrandModelResponse?> fetchBrands() async {
     return await homeService.fetchBrands();
   }
 

@@ -10,33 +10,35 @@ class HomeService {
 
   HomeService(this.dioClient);
 
-  Future<FaqModel?> getFaqs() async {
+  Future<FaqModelResponse?> getFaqs() async {
     try {
       final res = await dioClient.dio.get('/faq');
       if (res.statusCode == 200) {
-        final faq = FaqModel.fromJson(res.data['FAQs']);
+        final faq = FaqModelResponse.fromJson(res.data);
         return faq;
       } else {
         AppFlutterToast.flutterToastError('Couldn\'t fetch FAQs');
       }
     } catch (e) {
+      print(e);
       AppFlutterToast.flutterToastError('Couldn\'t fetch FAQs');
       return null;
     }
     return null;
   }
 
-  Future<BrandModel?> fetchBrands() async {
+  Future<BrandModelResponse?> fetchBrands() async {
     try {
       final res = await dioClient.dio.get('/makeWithImages');
       if (res.statusCode == 200) {
-        final brand = BrandModel.fromJson(res.data['dataObject']);
+        final brand = BrandModelResponse.fromJson(res.data);
         return brand;
       } else {
         AppFlutterToast.flutterToastError('Couldn\'t fetch Brands');
       }
     } catch (e) {
       AppFlutterToast.flutterToastError('Couldn\'t fetch Brands');
+      print(e);
       return null;
     }
     return null;
@@ -52,6 +54,7 @@ class HomeService {
         AppFlutterToast.flutterToastError('Couldn\'t fetch Filters');
       }
     } catch (e) {
+      print(e);
       AppFlutterToast.flutterToastError('Couldn\'t fetch Filters');
       return null;
     }

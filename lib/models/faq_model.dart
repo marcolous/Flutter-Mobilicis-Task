@@ -5,14 +5,14 @@ part 'faq_model.g.dart';
 @JsonSerializable()
 class FaqModel {
   @JsonKey(name: "_id")
-  final String id;
-  final String question;
-  final String answer;
+  final String? id;
+  final String? question;
+  final String? answer;
 
-  FaqModel({
-    required this.id,
-    required this.question,
-    required this.answer,
+  const FaqModel({
+    this.id,
+    this.question,
+    this.answer,
   });
 
   factory FaqModel.fromJson(Map<String, dynamic> json) =>
@@ -22,11 +22,18 @@ class FaqModel {
 
 @JsonSerializable()
 class FaqModelResponse {
-  final List<FaqModel> faqModels;
+  @JsonKey(name: "FAQs")
+  final List<FaqModel>? faqModels;
 
-  FaqModelResponse({required this.faqModels});
+  const FaqModelResponse({this.faqModels});
 
-  factory FaqModelResponse.fromJson(Map<String, dynamic> json) =>
-      _$FaqModelResponseFromJson(json);
+  factory FaqModelResponse.fromJson(Map<String, dynamic> json) {
+    return FaqModelResponse(
+      faqModels: (json['FAQs'] as List<dynamic>?)
+          ?.map((e) => FaqModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
   Map<String, dynamic> toJson() => _$FaqModelResponseToJson(this);
 }

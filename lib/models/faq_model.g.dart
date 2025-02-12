@@ -7,9 +7,9 @@ part of 'faq_model.dart';
 // **************************************************************************
 
 FaqModel _$FaqModelFromJson(Map<String, dynamic> json) => FaqModel(
-      id: json['_id'] as String,
-      question: json['question'] as String,
-      answer: json['answer'] as String,
+      id: json['_id'] as String?,
+      question: json['question'] as String?,
+      answer: json['answer'] as String?,
     );
 
 Map<String, dynamic> _$FaqModelToJson(FaqModel instance) => <String, dynamic>{
@@ -20,12 +20,12 @@ Map<String, dynamic> _$FaqModelToJson(FaqModel instance) => <String, dynamic>{
 
 FaqModelResponse _$FaqModelResponseFromJson(Map<String, dynamic> json) =>
     FaqModelResponse(
-      faqModels: (json['FaqModels'] as List<dynamic>)
-          .map((e) => FaqModel.fromJson(e as Map<String, dynamic>))
+      faqModels: (json['FAQs'] as List<dynamic>?)
+          ?.map((e) => FaqModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$FaqModelResponseToJson(FaqModelResponse instance) =>
     <String, dynamic>{
-      'FaqModels': instance.faqModels,
+      'FAQs': instance.faqModels,
     };

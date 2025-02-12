@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobilicis_task/utils/app_routes.dart';
 import 'package:mobilicis_task/view/auth/manager/auth_cubit.dart';
 import 'package:mobilicis_task/view/home/manager/filter_cubit.dart';
+import 'package:mobilicis_task/view/home/manager/home_cubit.dart';
 import 'package:mobilicis_task/view/splash/splash_view.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class Mobilicis extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => AuthCubit()),
         BlocProvider(create: (context) => FilterCubit()),
+        BlocProvider(create: (context) => HomeCubit()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 800),
