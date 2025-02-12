@@ -4,16 +4,17 @@ import 'package:mobilicis_task/services/service/auth_service.dart';
 class AuthRepo {
   final AuthService authService = AuthService(DioClient());
 
-  Future<bool> requestOtp(int countryCode, String mobileNumber) async {
+  Future<bool> requestOtp(int countryCode, int mobileNumber) async {
     try {
-      await authService.requestOtp(countryCode, mobileNumber);
-      return true;
+      final res = await authService.requestOtp(countryCode, mobileNumber);
+      return res;
     } catch (e) {
+      print(e);
       return false;
     }
   }
 
-  Future<bool> validateOtp(int countryCode, String mobileNumber, int otp) async {
+  Future<bool> validateOtp(int countryCode, int mobileNumber, int otp) async {
     try {
       await authService.validateOtp(countryCode, mobileNumber, otp);
       return true;
@@ -31,19 +32,19 @@ class AuthRepo {
     }
   }
 
-  Future<bool> logout(String csrfToken) async {
+  Future<bool> logout() async {
     try {
-      await authService.logout(csrfToken);
-      return true;
+      final res = await authService.logout();
+      return res;
     } catch (e) {
       return false;
     }
   }
 
-  Future<bool> updateUser(String csrfToken, int countryCode, String userName) async {
+  Future<bool> updateUser(int countryCode, String userName) async {
     try {
-      await authService.updateUser(csrfToken, countryCode, userName);
-      return true;
+      final res = await authService.updateUser(countryCode, userName);
+      return res;
     } catch (e) {
       return false;
     }

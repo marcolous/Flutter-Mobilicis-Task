@@ -3,8 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:mobilicis_task/services/manager/user_manager.dart';
+import 'package:mobilicis_task/services/repo/auth_repo.dart';
 import 'package:mobilicis_task/utils/app_images.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
+import 'package:mobilicis_task/view/auth/login_view.dart';
 import 'package:mobilicis_task/view/home/widgets/filter_sort.dart';
 import 'package:mobilicis_task/view/home/widgets/home_title_text.dart';
 import 'package:mobilicis_task/view/home/widgets/product_grid.dart';
@@ -74,22 +77,29 @@ class HomeView extends StatelessWidget {
                           width: 15.h,
                           child: AppImages.location,
                         ),
-                        Gap(15.w),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(80.w, 30.h),
-                            backgroundColor: const Color(0xffF6C018),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            'Login',
-                            style: AppStyles.style12BlackMedium,
-                          ),
-                        ),
+                        if (!UserManager.instance.isLoggedIn)
+                          Row(
+                            children: [
+                              Gap(15.w),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size(80.w, 30.h),
+                                  backgroundColor: const Color(0xffF6C018),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, LoginView.route);
+                                },
+                                child: Text(
+                                  'Login',
+                                  style: AppStyles.style12BlackMedium,
+                                ),
+                              ),
+                            ],
+                          )
                       ],
                     ),
                     Gap(16.w),
@@ -198,70 +208,6 @@ class _SearchAndTagsHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
     return false;
   }
-}
-
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const HomeAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.white,
-      leading: Builder(
-        builder: (context) => IconButton(
-          icon: SizedBox(
-            width: 25.w,
-            child: AppImages.drawer,
-          ),
-          onPressed: () => Scaffold.of(context).openDrawer(),
-        ),
-      ),
-      titleSpacing: BorderSide.strokeAlignInside,
-      title: Row(
-        children: [
-          SizedBox(
-            width: 60.w,
-            child: AppImages.logo,
-          ),
-          const Spacer(),
-          Row(
-            children: [
-              Text(
-                'India',
-                style: AppStyles.style12BlackRegular,
-              ),
-              Gap(5.w),
-              SizedBox(
-                width: 15.h,
-                child: AppImages.location,
-              ),
-              Gap(15.w),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size(80.w, 30.h),
-                  backgroundColor: const Color(0xffF6C018),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text(
-                  'Login',
-                  style: AppStyles.style12BlackMedium,
-                ),
-              ),
-            ],
-          ),
-          Gap(16.w),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class AppDrawer extends StatelessWidget {
@@ -442,7 +388,13 @@ class AppDrawerLoggedIn extends StatelessWidget {
               'Logout',
               style: AppStyles.style14GreyRegular.copyWith(color: Colors.black),
             ),
-            onTap: () {},
+            onTap: () async {
+              AuthRepo repo = AuthRepo();
+              final res = await repo.logout();
+              if (res) {
+                Navigator.pushNamed(context, HomeView.route);
+              }
+            },
           ),
           const Spacer(),
           Padding(

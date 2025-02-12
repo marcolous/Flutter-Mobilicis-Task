@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:mobilicis_task/services/manager/user_manager.dart';
 import 'package:mobilicis_task/utils/app_images.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
+import 'package:mobilicis_task/view/auth/account_not_found.dart';
+import 'package:mobilicis_task/view/auth/login_view.dart';
+import 'package:mobilicis_task/view/auth/manager/auth_cubit.dart';
+import 'package:mobilicis_task/view/auth/verify_otp.dart';
 
 class ProductsGridView extends StatelessWidget {
   const ProductsGridView({super.key});
@@ -12,14 +18,14 @@ class ProductsGridView extends StatelessWidget {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       sliver: SliverGrid.builder(
-        itemCount: 10, // Number of items in the grid
+        itemCount: 10,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Number of columns
-          childAspectRatio: 0.52, // Aspect ratio of each item
-          crossAxisSpacing: 10, // Spacing between columns
-          mainAxisSpacing: 15, // Spacing between rows
+          crossAxisCount: 2,
+          childAspectRatio: 0.52,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 15,
         ),
-        itemBuilder: (context, index) => const ProductCard(), // Your grid item
+        itemBuilder: (context, index) => const ProductCard(),
       ),
     );
   }
@@ -81,12 +87,19 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Positioned(
+              Positioned(
                 top: 10,
                 right: 10,
-                child: Icon(
-                  Icons.favorite_border,
-                  color: Colors.white,
+                child: GestureDetector(
+                  onTap: () {
+                    if (!UserManager.instance.isLoggedIn) {
+                      modalBottomSheet(context);
+                    }
+                  },
+                  child: const Icon(
+                    Icons.favorite_border,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               Positioned(
@@ -94,7 +107,6 @@ class ProductCard extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Container(
-                  // width: double.infinity,
                   height: 25.h,
                   decoration: BoxDecoration(
                     color: const Color(0xff4C4C4C).withOpacity(.7),
@@ -176,6 +188,104 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<dynamic> modalBottomSheet(BuildContext context) {
+    final cubit = context.read<AuthCubit>();
+    final PageController pageController =
+        PageController(initialPage: cubit.state.currentScreen);
+
+    int index = cubit.index;
+
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        child: BlocConsumer<AuthCubit, AuthState>(
+          listenWhen: (previous, current) =>
+              previous.currentScreen != current.currentScreen,
+          listener: (context, state) {
+            index = cubit.index;
+            pageController.animateToPage(
+              state.currentScreen,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+            if (index == 0) {
+              cubit.setSheetHeight(300);
+              cubit.setSheetTitle('Sign in to continue');
+            } else if (index == 1) {
+              cubit.setSheetHeight(400);
+              cubit.setSheetTitle('Verify OTP');
+            } else {
+              cubit.setSheetHeight(250);
+              cubit.setSheetTitle('Sign Up to continue');
+            }
+          },
+          builder: (context, state) {
+            return Container(
+              height:
+                  MediaQuery.of(context).viewInsets.bottom + cubit.sheetHeight,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+              ),
+              child: Column(
+                children: [
+                  Gap(10.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (index == 1)
+                          IconButton(
+                            onPressed: () {
+                              final previousIndex =
+                                  cubit.state.currentScreen - 1;
+                              cubit.updateCurrentScreen(previousIndex);
+                            },
+                            icon: const Icon(Icons.arrow_back),
+                          ),
+                        Text(
+                          cubit.sheetTitle,
+                          style: AppStyles.style16DarkGreyRegular
+                              .copyWith(color: const Color(0xff1D1B20)),
+                        ),
+                        IconButton(
+                          icon: SizedBox(
+                            height: 25.sp,
+                            child: AppImages.close,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.black.withOpacity(.1),
+                    thickness: 2,
+                  ),
+                  Gap(10.h),
+                  Expanded(
+                    child: PageView(
+                      controller: pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: const [
+                        LoginView(isBottomSheet: true),
+                        VerifyOtp(isBottomSheet: true),
+                        AccountNotFound(isBottomSheet: true),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

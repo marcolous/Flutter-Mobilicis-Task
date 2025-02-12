@@ -2,35 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     required this.hintText,
     this.controller,
-    this.isPhone = false,
-    this.isPassword = false,
+    this.isText = false,
     required this.title,
     this.hasAst = false,
   });
   final String hintText;
   final TextEditingController? controller;
-  final bool isPhone;
-  final bool isPassword;
+  final bool isText;
   final String title;
   final bool hasAst;
-
-  @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
-}
-
-class _CustomTextFieldState extends State<CustomTextField> {
-  late bool isSecure;
-
-  @override
-  void initState() {
-    super.initState();
-    isSecure = widget.isPassword;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +26,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         children: [
           RichText(
             text: TextSpan(
-              text: widget.title,
+              text: title,
               style: AppStyles.style12BlackRegular,
               children: [
-                widget.hasAst
+                hasAst
                     ? TextSpan(
                         text: '*',
                         style: AppStyles.style12BlackRegular
@@ -55,7 +40,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
           ),
           Container(
-            height: 55,
+            height: 70,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
@@ -65,28 +50,26 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 if (value!.isEmpty) {
                   return 'Required field';
                 }
+                if (!isText && controller!.text.length < 10) {
+                  return 'Enter a valid number';
+                }
                 return null;
               },
-              obscureText: isSecure,
-              keyboardType: widget.isPhone
-                  ? TextInputType.phone
-                  : TextInputType.emailAddress,
+              keyboardType: !isText ? TextInputType.phone : TextInputType.text,
               style: AppStyles.style16DarkGreyRegular,
-              controller: widget.controller,
+              controller: controller,
               decoration: InputDecoration(
-                prefixText: widget.isPhone ? '+91 ' : null,
-                prefixStyle: AppStyles.style16DarkGreyRegular,
-                suffixIcon: widget.isPassword
-                    ? IconButton(
-                        onPressed: () => setState(() => isSecure = !isSecure),
-                        icon: Icon(
-                          isSecure
-                              ? Icons.visibility_rounded
-                              : Icons.visibility_off_rounded,
+                prefix: !isText
+                    ? Padding(
+                        padding: EdgeInsets.only(right: 8.w),
+                        child: Text(
+                          '+91 ',
+                          style: AppStyles.style16DarkGreyRegular,
                         ),
                       )
                     : null,
-                hintText: widget.hintText,
+                prefixStyle: AppStyles.style16DarkGreyRegular,
+                hintText: hintText,
                 hintStyle: AppStyles.style16LightGreyRegular,
                 filled: true,
                 fillColor: Colors.white,
@@ -112,7 +95,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 
   InputBorder errBorderDecoration() {
-    return const UnderlineInputBorder(
+    return const OutlineInputBorder(
       borderSide: BorderSide(
         color: Colors.red,
         width: 1,
