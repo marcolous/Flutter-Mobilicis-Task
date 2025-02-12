@@ -16,7 +16,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$FilterState {
-  List<String> get selectedSubcategories => throw _privateConstructorUsedError;
+  Map<String, dynamic> get selectedSubcategories =>
+      throw _privateConstructorUsedError;
   RangeValues get priceRange => throw _privateConstructorUsedError;
   String? get selectedCategory => throw _privateConstructorUsedError;
 
@@ -32,7 +33,7 @@ abstract class $FilterStateCopyWith<$Res> {
       _$FilterStateCopyWithImpl<$Res, FilterState>;
   @useResult
   $Res call(
-      {List<String> selectedSubcategories,
+      {Map<String, dynamic> selectedSubcategories,
       RangeValues priceRange,
       String? selectedCategory});
 }
@@ -58,7 +59,7 @@ class _$FilterStateCopyWithImpl<$Res, $Val extends FilterState>
       selectedSubcategories: null == selectedSubcategories
           ? _value.selectedSubcategories
           : selectedSubcategories // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as Map<String, dynamic>,
       priceRange: null == priceRange
           ? _value.priceRange
           : priceRange // ignore: cast_nullable_to_non_nullable
@@ -80,7 +81,7 @@ abstract class _$$FilterStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<String> selectedSubcategories,
+      {Map<String, dynamic> selectedSubcategories,
       RangeValues priceRange,
       String? selectedCategory});
 }
@@ -104,7 +105,7 @@ class __$$FilterStateImplCopyWithImpl<$Res>
       selectedSubcategories: null == selectedSubcategories
           ? _value._selectedSubcategories
           : selectedSubcategories // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as Map<String, dynamic>,
       priceRange: null == priceRange
           ? _value.priceRange
           : priceRange // ignore: cast_nullable_to_non_nullable
@@ -121,25 +122,26 @@ class __$$FilterStateImplCopyWithImpl<$Res>
 
 class _$FilterStateImpl implements _FilterState {
   const _$FilterStateImpl(
-      {final List<String> selectedSubcategories = const [],
+      {final Map<String, dynamic> selectedSubcategories = const {},
       this.priceRange = const RangeValues(5000, 100000),
-      this.selectedCategory})
+      this.selectedCategory = 'Brand'})
       : _selectedSubcategories = selectedSubcategories;
 
-  final List<String> _selectedSubcategories;
+  final Map<String, dynamic> _selectedSubcategories;
   @override
   @JsonKey()
-  List<String> get selectedSubcategories {
-    if (_selectedSubcategories is EqualUnmodifiableListView)
+  Map<String, dynamic> get selectedSubcategories {
+    if (_selectedSubcategories is EqualUnmodifiableMapView)
       return _selectedSubcategories;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_selectedSubcategories);
+    return EqualUnmodifiableMapView(_selectedSubcategories);
   }
 
   @override
   @JsonKey()
   final RangeValues priceRange;
   @override
+  @JsonKey()
   final String? selectedCategory;
 
   @override
@@ -176,12 +178,12 @@ class _$FilterStateImpl implements _FilterState {
 
 abstract class _FilterState implements FilterState {
   const factory _FilterState(
-      {final List<String> selectedSubcategories,
+      {final Map<String, dynamic> selectedSubcategories,
       final RangeValues priceRange,
       final String? selectedCategory}) = _$FilterStateImpl;
 
   @override
-  List<String> get selectedSubcategories;
+  Map<String, dynamic> get selectedSubcategories;
   @override
   RangeValues get priceRange;
   @override

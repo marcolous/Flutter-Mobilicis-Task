@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:mobilicis_task/models/filter_model.dart';
+import 'package:mobilicis_task/services/repo/home_repo.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
 import 'package:mobilicis_task/view/home/manager/filter_cubit.dart';
+import 'package:mobilicis_task/view/home/manager/home_cubit.dart';
 
 void showFilterBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -80,7 +83,39 @@ class FilterBottomSheetContent extends StatelessWidget {
                     width: 180.w,
                     height: 50.h,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final model = context.read<HomeCubit>().model;
+                        final selectedSubcategories = context
+                            .read<FilterCubit>()
+                            .state
+                            .selectedSubcategories;
+
+                        List<String> brand =
+                            selectedSubcategories['Brand'] ?? [];
+                        List<String> condition =
+                            selectedSubcategories['Condition'] ?? [];
+                        List<String> storage =
+                            selectedSubcategories['Storage'] ?? [];
+                        List<String> ram = selectedSubcategories['RAM'] ?? [];
+                        bool verification =
+                            selectedSubcategories['Verification'] ?? true;
+                        List<String> warranty =
+                            selectedSubcategories['Warranty'] ?? [];
+
+                        model.brand = brand;
+                        model.conditions = condition;
+                        model.storage = storage;
+                        model.ram = ram;
+                        model.verified = verification;
+                        model.warranty = warranty;
+                        model.priceRange = [];
+
+                        await context
+                            .read<HomeCubit>()
+                            .fetchFilteredProducts(model);
+
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xffF6C018),
                         foregroundColor: Colors.white,
@@ -114,7 +149,7 @@ class FilterBottomSheetContent extends StatelessWidget {
     return ListView.builder(
       itemCount: categories.length,
       itemBuilder: (context, index) {
-        final picked = context.watch<FilterCubit>().state.selectedCategory ==
+        bool picked = context.watch<FilterCubit>().state.selectedCategory ==
             categories[index];
         return Container(
           decoration: BoxDecoration(
@@ -152,97 +187,67 @@ class FilterBottomSheetContent extends StatelessWidget {
       );
     }
 
-    final subcategories = _getSubcategories(selectedCategory);
+    final subcategories = _getSubcategories(context, selectedCategory);
 
-    return ListView.builder(
-      itemCount: subcategories.length,
-      itemBuilder: (context, index) {
-        final isSelected = context
-            .watch<FilterCubit>()
-            .state
-            .selectedSubcategories
-            .contains(subcategories[index]);
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (context, state) {
+        return ListView.builder(
+          itemCount: subcategories.length,
+          itemBuilder: (context, index) {
+            final isSelected =
+                state.selectedSubcategories[selectedCategory] != null &&
+                    state.selectedSubcategories[selectedCategory]!
+                        .contains(subcategories[index]);
 
-        return GestureDetector(
-          onTap: () {
-            context.read<FilterCubit>().toggleSubcategory(subcategories[index]);
-          },
-          child: Row(
-            children: [
-              Checkbox(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                checkColor: Colors.white,
-                activeColor: const Color(0xff484848),
-                side: const BorderSide(color: Color(0xffD9D9D9)),
-                value: isSelected,
-                onChanged: (bool? value) {
-                  context
-                      .read<FilterCubit>()
-                      .toggleSubcategory(subcategories[index]);
-                },
+            return GestureDetector(
+              onTap: () {
+                context
+                    .read<FilterCubit>()
+                    .toggleSubcategory(selectedCategory!, subcategories[index]);
+              },
+              child: Row(
+                children: [
+                  Checkbox(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    checkColor: Colors.white,
+                    activeColor: const Color(0xff484848),
+                    side: const BorderSide(color: Color(0xffD9D9D9)),
+                    value: isSelected,
+                    onChanged: (bool? value) {
+                      context.read<FilterCubit>().toggleSubcategory(
+                          selectedCategory!, subcategories[index]);
+                    },
+                  ),
+                  Text(
+                    subcategories[index],
+                    style: AppStyles.style14GreyRegular
+                        .copyWith(color: Colors.black),
+                  ),
+                ],
               ),
-              Text(
-                subcategories[index],
-                style:
-                    AppStyles.style14GreyRegular.copyWith(color: Colors.black),
-              )
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  List<String> _getSubcategories(String? category) {
+  List<String> _getSubcategories(BuildContext context, String? category) {
     switch (category) {
       case 'Brand':
-        return [
-          'All Brands',
-          'Apple',
-          'Samsung',
-          'Google',
-          'OnePlus',
-          'Xiaomi',
-        ];
+        return context.read<HomeCubit>().filter!.brand!;
       case 'Condition':
-        return [
-          'All Conditions',
-          'Like New',
-          'Excellent',
-          'Good',
-          'Fair',
-          'Needs Repair'
-        ];
+        return context.read<HomeCubit>().filter!.conditions!;
       case 'Storage':
-        return [
-          'All',
-          '8 GB',
-          '16 GB',
-          '32 GB',
-          '64 GB',
-          '128 GB',
-          '256 GB',
-          '512 GB',
-          '1 TB'
-        ];
-
+        return context.read<HomeCubit>().filter!.storage!;
       case 'RAM':
-        return [
-          'All',
-          '2 GB',
-          '3 GB',
-          '4 GB',
-          '6 GB',
-          '8 GB',
-          '12 GB',
-          '16 GB'
-        ];
+        return context.read<HomeCubit>().filter!.ram!;
       case 'Verification':
         return ['All', 'Verified Only'];
       case 'Warranty':
-        return ['Brand Warranty', 'Seller Warranty'];
+        return context.read<HomeCubit>().filter!.warranty!;
       default:
         return [];
     }
@@ -282,6 +287,8 @@ class FilterBottomSheetContent extends StatelessWidget {
                     .toString(),
               ),
               onChanged: (RangeValues values) {
+                final model = context.read<HomeCubit>().model;
+                model.priceRange = [values.start, values.end];
                 context.read<FilterCubit>().updatePriceRange(values);
               },
             ),

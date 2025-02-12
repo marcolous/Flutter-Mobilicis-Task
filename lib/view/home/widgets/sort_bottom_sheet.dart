@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
+import 'package:mobilicis_task/view/home/manager/home_cubit.dart';
 
 void showSortBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -99,7 +101,31 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                     width: 180.w,
                     height: 50.h,
                     child: ElevatedButton(
-                      onPressed: selectedOption != null ? () {} : null,
+                      onPressed: () {
+                        final model = context.read<HomeCubit>().model;
+
+                        switch (selectedOption) {
+                          case 'Price: High To Low':
+                            model.sort = {"price": -1};
+                            break;
+                          case 'Price: Low To High':
+                            model.sort = {"price": 1};
+                            break;
+                          case 'Latest':
+                            model.sort = {"date": -1};
+                            break;
+                          case 'Distance':
+                            model.sort = {"views": -1};
+                            break;
+                          case 'Value For Money':
+                          default:
+                            model.sort = {};
+                            break;
+                        }
+
+                        context.read<HomeCubit>().fetchFilteredProducts(model);
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xffF6C018),
                         foregroundColor: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:mobilicis_task/models/brand_model.dart';
 import 'package:mobilicis_task/models/faq_model.dart';
 import 'package:mobilicis_task/models/filter_model.dart';
+import 'package:mobilicis_task/models/product_model.dart';
 import 'package:mobilicis_task/services/dio_client.dart';
 import 'package:mobilicis_task/services/service/home_service.dart';
 
@@ -19,8 +20,12 @@ class HomeRepo {
     return await homeService.fetchFilters();
   }
 
-  Future<FilterModel?> fetchProducts(Map<String, dynamic> filters) async {
-    return await homeService.fetchProducts(filters);
+  Future<List<ProductModel>?> fetchAllProducts() async {
+    return await homeService.fetchAllProducts();
+  }
+
+  Future<List<ProductModel>?> fetchFilteredProducts(FilterModel filter) async {
+    return await homeService.fetchFilteredProducts(filter);
   }
 
   Future<bool> likeProduct(

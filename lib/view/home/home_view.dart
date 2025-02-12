@@ -20,9 +20,7 @@ class HomeView extends StatelessWidget {
   static const route = 'home';
   const HomeView({super.key});
 
-  Future<void> refresh() async {
-    
-  }
+  Future<void> refresh() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +139,17 @@ class HomeView extends StatelessWidget {
                 ),
               ),
               const ProductsGridView(),
+              const SliverToBoxAdapter(
+                child: ExpansionTile(
+                  title: Text("Why should you buy used phones on ORUphones?"),
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("ORUphones provides verified listings..."))
+                  ],
+                ),
+              ),
+              SliverToBoxAdapter(child: AppImages.endScreen),
             ],
           ),
         ),

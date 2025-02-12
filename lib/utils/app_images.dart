@@ -53,4 +53,5 @@ class AppImages {
   static Image drawer6 = Image.asset('assets/images/drawer6.png');
   static Image drawer7 = Image.asset('assets/images/drawer7.png');
   static Image logout = Image.asset('assets/images/logout.png');
+  static Image endScreen = Image.asset('assets/images/end_screen.png');
 }

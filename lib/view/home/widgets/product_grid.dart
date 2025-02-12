@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:mobilicis_task/models/product_model.dart';
 import 'package:mobilicis_task/services/manager/user_manager.dart';
 import 'package:mobilicis_task/utils/app_images.dart';
 import 'package:mobilicis_task/utils/app_styles.dart';
+import 'package:mobilicis_task/utils/widgets/cached_network_image.dart';
 import 'package:mobilicis_task/view/auth/account_not_found.dart';
 import 'package:mobilicis_task/view/auth/login_view.dart';
 import 'package:mobilicis_task/view/auth/manager/auth_cubit.dart';
 import 'package:mobilicis_task/view/auth/verify_otp.dart';
+import 'package:mobilicis_task/view/home/manager/home_cubit.dart';
 
 class ProductsGridView extends StatelessWidget {
   const ProductsGridView({super.key});
@@ -17,22 +20,28 @@ class ProductsGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      sliver: SliverGrid.builder(
-        itemCount: 10,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.52,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 15,
-        ),
-        itemBuilder: (context, index) => const ProductCard(),
+      sliver: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return SliverGrid.builder(
+            itemCount: state.products!.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.52,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 15,
+            ),
+            itemBuilder: (context, index) =>
+                ProductCard(product: state.products![index]),
+          );
+        },
       ),
     );
   }
 }
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  const ProductCard({super.key, required this.product});
+  final ProductModel product;
 
   @override
   Widget build(BuildContext context) {
@@ -54,39 +63,40 @@ class ProductCard extends StatelessWidget {
                   topRight: Radius.circular(12.r),
                   topLeft: Radius.circular(12.r),
                 ),
-                child: Image.network(
-                  'https://i.imgur.com/QULzhVh.png',
+                child: CachedImageWidget(
+                  imageUrl: product.images![0].thumbImage!,
                   height: 200,
                   width: double.infinity,
-                  fit: BoxFit.cover,
                 ),
               ),
-              Positioned(
-                top: 10,
-                left: 0,
-                child: SizedBox(
-                  width: 120.w,
-                  child: AppImages.verified,
-                ),
-              ),
-              Positioned(
-                top: 15,
-                left: 8,
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'ORU',
-                        style: AppStyles.style12WhiteSemiBold,
-                      ),
-                      TextSpan(
-                        text: 'Verified',
-                        style: AppStyles.style12WhiteMedium,
-                      )
-                    ],
+              if (product.verified!)
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: SizedBox(
+                    width: 120.w,
+                    child: AppImages.verified,
                   ),
                 ),
-              ),
+              if (product.verified!)
+                Positioned(
+                  top: 15,
+                  left: 8,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'ORU',
+                          style: AppStyles.style12WhiteSemiBold,
+                        ),
+                        TextSpan(
+                          text: 'Verified',
+                          style: AppStyles.style12WhiteMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               Positioned(
                 top: 10,
                 right: 10,
@@ -102,23 +112,24 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 25.h,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff4C4C4C).withOpacity(.7),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'PRICE NEGOTIABLE',
-                      style: AppStyles.style12WhiteSemiBold,
+              if (product.openForNegotiation!)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 25.h,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff4C4C4C).withOpacity(.7),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'PRICE NEGOTIABLE',
+                        style: AppStyles.style12WhiteSemiBold,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
           Padding(
@@ -128,12 +139,14 @@ class ProductCard extends StatelessWidget {
               children: [
                 Gap(10.h),
                 Text(
-                  'Apple iPhone 13 Pro',
+                  product.marketingName!,
                   style: AppStyles.style14BlackMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Gap(4.h),
                 Text(
-                  '12/256 GB • Like New',
+                  '${product.deviceStorage!} • ${product.deviceCondition}',
                   style: AppStyles.style12BlackRegular.copyWith(
                     color: const Color(0xff6D6D6D),
                   ),
@@ -142,19 +155,19 @@ class ProductCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '₹ 41,500',
+                      '₹ ${product.discountedPrice ?? 0}',
                       style: AppStyles.style14BlackBold,
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '₹ 81,500',
+                      '₹ ${product.originalPrice ?? 0}',
                       style: AppStyles.style10BlackMedium.copyWith(
                         decoration: TextDecoration.lineThrough,
                       ),
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '(45% off)',
+                      '(${product.discountPercentage?.toStringAsFixed(0) ?? '0'}% off)',
                       style: AppStyles.style10BlackMedium
                           .copyWith(color: Colors.red),
                       overflow: TextOverflow.ellipsis,

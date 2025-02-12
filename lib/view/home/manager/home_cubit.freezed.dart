@@ -16,9 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$HomeState {
-  FilterModel get filters => throw _privateConstructorUsedError;
+  FilterModel? get filters => throw _privateConstructorUsedError;
+  FaqModelResponse? get faqs => throw _privateConstructorUsedError;
   List<BrandModel>? get brands => throw _privateConstructorUsedError;
-  FaqModelResponse get faqs => throw _privateConstructorUsedError;
+  List<ProductModel>? get products => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -31,7 +32,10 @@ abstract class $HomeStateCopyWith<$Res> {
       _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
   $Res call(
-      {FilterModel filters, List<BrandModel>? brands, FaqModelResponse faqs});
+      {FilterModel? filters,
+      FaqModelResponse? faqs,
+      List<BrandModel>? brands,
+      List<ProductModel>? products});
 }
 
 /// @nodoc
@@ -47,23 +51,28 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? filters = null,
+    Object? filters = freezed,
+    Object? faqs = freezed,
     Object? brands = freezed,
-    Object? faqs = null,
+    Object? products = freezed,
   }) {
     return _then(_value.copyWith(
-      filters: null == filters
+      filters: freezed == filters
           ? _value.filters
           : filters // ignore: cast_nullable_to_non_nullable
-              as FilterModel,
+              as FilterModel?,
+      faqs: freezed == faqs
+          ? _value.faqs
+          : faqs // ignore: cast_nullable_to_non_nullable
+              as FaqModelResponse?,
       brands: freezed == brands
           ? _value.brands
           : brands // ignore: cast_nullable_to_non_nullable
               as List<BrandModel>?,
-      faqs: null == faqs
-          ? _value.faqs
-          : faqs // ignore: cast_nullable_to_non_nullable
-              as FaqModelResponse,
+      products: freezed == products
+          ? _value.products
+          : products // ignore: cast_nullable_to_non_nullable
+              as List<ProductModel>?,
     ) as $Val);
   }
 }
@@ -77,7 +86,10 @@ abstract class _$$HomeStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {FilterModel filters, List<BrandModel>? brands, FaqModelResponse faqs});
+      {FilterModel? filters,
+      FaqModelResponse? faqs,
+      List<BrandModel>? brands,
+      List<ProductModel>? products});
 }
 
 /// @nodoc
@@ -91,23 +103,28 @@ class __$$HomeStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? filters = null,
+    Object? filters = freezed,
+    Object? faqs = freezed,
     Object? brands = freezed,
-    Object? faqs = null,
+    Object? products = freezed,
   }) {
     return _then(_$HomeStateImpl(
-      filters: null == filters
+      filters: freezed == filters
           ? _value.filters
           : filters // ignore: cast_nullable_to_non_nullable
-              as FilterModel,
+              as FilterModel?,
+      faqs: freezed == faqs
+          ? _value.faqs
+          : faqs // ignore: cast_nullable_to_non_nullable
+              as FaqModelResponse?,
       brands: freezed == brands
           ? _value._brands
           : brands // ignore: cast_nullable_to_non_nullable
               as List<BrandModel>?,
-      faqs: null == faqs
-          ? _value.faqs
-          : faqs // ignore: cast_nullable_to_non_nullable
-              as FaqModelResponse,
+      products: freezed == products
+          ? _value._products
+          : products // ignore: cast_nullable_to_non_nullable
+              as List<ProductModel>?,
     ));
   }
 }
@@ -115,18 +132,20 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$HomeStateImpl implements _HomeState {
-  const _$HomeStateImpl(
-      {this.filters = const FilterModel(),
-      final List<BrandModel>? brands = const [],
-      this.faqs = const FaqModelResponse()})
-      : _brands = brands;
+  _$HomeStateImpl(
+      {this.filters,
+      this.faqs,
+      final List<BrandModel>? brands,
+      final List<ProductModel>? products})
+      : _brands = brands,
+        _products = products;
 
   @override
-  @JsonKey()
-  final FilterModel filters;
+  final FilterModel? filters;
+  @override
+  final FaqModelResponse? faqs;
   final List<BrandModel>? _brands;
   @override
-  @JsonKey()
   List<BrandModel>? get brands {
     final value = _brands;
     if (value == null) return null;
@@ -135,13 +154,19 @@ class _$HomeStateImpl implements _HomeState {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<ProductModel>? _products;
   @override
-  @JsonKey()
-  final FaqModelResponse faqs;
+  List<ProductModel>? get products {
+    final value = _products;
+    if (value == null) return null;
+    if (_products is EqualUnmodifiableListView) return _products;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'HomeState(filters: $filters, brands: $brands, faqs: $faqs)';
+    return 'HomeState(filters: $filters, faqs: $faqs, brands: $brands, products: $products)';
   }
 
   @override
@@ -150,13 +175,18 @@ class _$HomeStateImpl implements _HomeState {
         (other.runtimeType == runtimeType &&
             other is _$HomeStateImpl &&
             (identical(other.filters, filters) || other.filters == filters) &&
+            (identical(other.faqs, faqs) || other.faqs == faqs) &&
             const DeepCollectionEquality().equals(other._brands, _brands) &&
-            (identical(other.faqs, faqs) || other.faqs == faqs));
+            const DeepCollectionEquality().equals(other._products, _products));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, filters, const DeepCollectionEquality().hash(_brands), faqs);
+      runtimeType,
+      filters,
+      faqs,
+      const DeepCollectionEquality().hash(_brands),
+      const DeepCollectionEquality().hash(_products));
 
   @JsonKey(ignore: true)
   @override
@@ -166,17 +196,20 @@ class _$HomeStateImpl implements _HomeState {
 }
 
 abstract class _HomeState implements HomeState {
-  const factory _HomeState(
-      {final FilterModel filters,
+  factory _HomeState(
+      {final FilterModel? filters,
+      final FaqModelResponse? faqs,
       final List<BrandModel>? brands,
-      final FaqModelResponse faqs}) = _$HomeStateImpl;
+      final List<ProductModel>? products}) = _$HomeStateImpl;
 
   @override
-  FilterModel get filters;
+  FilterModel? get filters;
+  @override
+  FaqModelResponse? get faqs;
   @override
   List<BrandModel>? get brands;
   @override
-  FaqModelResponse get faqs;
+  List<ProductModel>? get products;
   @override
   @JsonKey(ignore: true)
   _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>

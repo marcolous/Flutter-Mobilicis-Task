@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:mobilicis_task/models/brand_model.dart';
 import 'package:mobilicis_task/models/faq_model.dart';
 import 'package:mobilicis_task/models/filter_model.dart';
+import 'package:mobilicis_task/models/product_model.dart';
 import 'package:mobilicis_task/services/dio_client.dart';
 import 'package:mobilicis_task/utils/widgets/app_flutter_toast.dart';
 
@@ -61,10 +62,43 @@ class HomeService {
     return null;
   }
 
-  Future<FilterModel?> fetchProducts(Map<String, dynamic> filters) async {
+  Future<List<ProductModel>?> fetchAllProducts() async {
     try {
-      final res = await dioClient.dio.post('/filter', data: filters);
-    } catch (e) {}
+      final res = await dioClient.dio.post(
+        '/filter',
+        data: {'filter': {}},
+      );
+      if (res.statusCode == 200) {
+        final products = ProductModel.fromJsonList(res.data['data']['data']);
+        return products;
+      }
+    } catch (e) {
+      print(e);
+      AppFlutterToast.flutterToastError('Couldn\'t fetch Products');
+      return null;
+    }
+    return null;
+  }
+
+  Future<List<ProductModel>?> fetchFilteredProducts(FilterModel filter) async {
+    try {
+      final payload = {'filter': filter.toJson()};
+      print('Request Payload: $payload');
+
+      final res = await dioClient.dio.post(
+        '/filter',
+        data: payload,
+      );
+      if (res.statusCode == 200) {
+        final product = ProductModel.fromJsonList(res.data['data']['data']);
+        print(product.length);
+        return product;
+      }
+    } catch (e) {
+      print(e);
+      AppFlutterToast.flutterToastError('Couldn\'t fetch Products');
+      return null;
+    }
     return null;
   }
 
